@@ -1,0 +1,539 @@
+<!doctype html><html lang="pt"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anotação do conjunto de referência</title>
+<style>
+:root{color-scheme:light;--sup:#fcfcfb;--sup2:#f3f3f1;--sup3:#e8e8e4;--linha:#e0e0dc;
+ --ink:#0b0b0b;--ink2:#4f4e4b;--ink3:#78766f;--s1:#2a78d6;--s1f:rgba(42,120,214,.10);--s1m:rgba(42,120,214,.22);
+ --bom:#0ca30c;--aviso:#a86f00;--critico:#d03b3b;--r1:#2a78d6;--r2:#c85a1c;--r3:#8a5bb8}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme=light])){color-scheme:dark;
+ --sup:#1a1a19;--sup2:#232322;--sup3:#2f2f2d;--linha:#37372f;--ink:#fff;--ink2:#c8c7bc;--ink3:#93928a;
+ --s1:#3987e5;--s1f:rgba(57,135,229,.16);--s1m:rgba(57,135,229,.34);--aviso:#e0a526;--r1:#6aa8f0;--r2:#f08a4e;--r3:#b98be6}}
+:root[data-theme=dark]{color-scheme:dark;--sup:#1a1a19;--sup2:#232322;--sup3:#2f2f2d;--linha:#37372f;--ink:#fff;
+ --ink2:#c8c7bc;--ink3:#93928a;--s1:#3987e5;--s1f:rgba(57,135,229,.16);--s1m:rgba(57,135,229,.34);--aviso:#e0a526;
+ --r1:#6aa8f0;--r2:#f08a4e;--r3:#b98be6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--sup);color:var(--ink);font:14px/1.5 ui-sans-serif,system-ui,"Segoe UI",sans-serif}
+button{font:inherit;cursor:pointer;background:var(--sup2);border:1px solid var(--linha);color:var(--ink);border-radius:7px;padding:4px 10px}
+button:hover{border-color:var(--ink3)}
+button.on{background:var(--s1);border-color:var(--s1);color:#fff}
+button:disabled{opacity:.3;cursor:default}
+kbd{font:600 10.5px ui-monospace,Menlo,monospace;border:1px solid var(--linha);border-bottom-width:2px;border-radius:4px;
+ padding:0 4px;background:var(--sup);color:var(--ink2)}
+button.on kbd{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.5);color:#fff}
+input{font:inherit;background:var(--sup);color:var(--ink);border:1px solid var(--linha);border-radius:6px;padding:4px 8px;width:100%}
+.meta{color:var(--ink3);font-size:12px}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+/* ---------- topo ---------- */
+.topo{position:sticky;top:0;z-index:5;background:var(--sup);border-bottom:1px solid var(--linha);padding:7px 18px;
+ display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.topo b{font-size:13px}
+.prog{flex:1;min-width:180px;max-width:420px}
+.prog .b{height:7px;background:var(--sup3);border-radius:4px;overflow:hidden;position:relative}
+.prog .b i{position:absolute;left:0;top:0;bottom:0;background:var(--bom);border-radius:4px}
+.prog .b s{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink2)}
+.fil{display:flex;gap:4px}.fil button{font-size:12px;padding:2px 8px}
+/* ---------- corpo ---------- */
+.corpo{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:20px;max-width:1260px;margin:0 auto;padding:12px 18px 80px}
+@media (max-width:1050px){.corpo{grid-template-columns:minmax(0,1fr)}.lado{display:none}}
+.cab{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.cab h2{font-size:17px;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}
+.chip{background:var(--sup2);border:1px solid var(--linha);border-radius:12px;padding:0 8px;font-size:12px}
+.chip b{color:var(--ink3);font-weight:600;font-size:10px;margin-right:4px;text-transform:uppercase}
+.ctx{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+@media (max-width:800px){.ctx{grid-template-columns:1fr}}
+.cx{border:1px dashed var(--linha);border-radius:8px;padding:6px 10px;font-size:12.5px;color:var(--ink2)}
+.cx h4{margin:0 0 3px;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink3)}
+.cx .h{padding:2px 0;white-space:pre-line}.cx .h span{font:11px ui-monospace,Menlo,monospace;color:var(--ink3);margin-right:6px}
+.cx .n{padding:2px 0}.cx .n b{font:600 12px ui-monospace,Menlo,monospace;color:var(--ink)}
+/* ---------- texto ---------- */
+.rel{font-size:17px;line-height:1.75;background:var(--sup2);border:1px solid var(--linha);border-radius:10px;
+ padding:14px 18px;margin:6px 0 12px;white-space:pre-wrap}
+.fr{border-radius:4px;cursor:pointer;padding:1px 0}
+.fr:hover{background:var(--s1f)}
+.fr.esc{background:var(--s1m)}
+.fr sup{font:600 10px ui-monospace,Menlo,monospace;color:var(--ink3);margin-right:2px;user-select:none}
+.passo-excerto .fr sup{color:#fff;background:var(--s1);border-radius:3px;padding:0 3px}
+.r{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.r1{text-decoration-color:var(--r1)}.r2{text-decoration-color:var(--r2)}.r3{text-decoration-color:var(--r3)}
+.sem-realce .r{text-decoration:none}
+/* ---------- decisão ---------- */
+.dec{border:1px solid var(--linha);border-radius:10px;overflow:hidden}
+.par-t{background:var(--sup2);padding:4px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);
+ display:flex;justify-content:space-between;border-top:1px solid var(--linha)}
+.passo{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:8px 12px;border-top:1px solid var(--linha);align-items:start}
+.passo:first-child{border-top:0}
+.passo .nome{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);padding-top:6px}
+.passo.feito{cursor:pointer}.passo.feito:hover{background:var(--s1f)}
+.passo .val{padding-top:4px;font-weight:600}
+.passo.ativo{background:var(--s1f);box-shadow:inset 3px 0 0 var(--s1)}
+.passo.ativo .nome{color:var(--s1);font-weight:700}
+.passo.salto .val{font-weight:400;color:var(--ink3)}
+.ops{display:flex;flex-wrap:wrap;gap:6px}
+.ops button{padding:8px 12px;font-size:14px;text-align:left}
+.negs{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.negs button{padding:8px 12px;text-align:left}
+.negs .t1{font-weight:600}.negs .t1 span{font-family:ui-monospace,Menlo,monospace}
+.negs .t2{font-size:12px;color:var(--ink3);margin-top:2px}
+.negs button.on .t2{color:rgba(255,255,255,.85)}
+.g4{display:grid;gap:8px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.g10{display:grid;gap:6px;grid-template-columns:repeat(10,minmax(0,1fr))}
+.g4 button,.g10 button{text-align:center;padding:9px 4px}
+.g10 button b{display:block;font-size:19px;line-height:1.1}
+.g10 button small{display:block;font-size:10.5px;opacity:.85}
+.regra{font-size:12.5px;color:var(--ink2);margin-top:7px;line-height:1.45}
+.regra b{color:var(--ink)}
+.fim{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--linha);background:var(--sup2)}
+.estado{font-size:13px;margin-left:auto}
+.estado.ok{color:var(--bom);font-weight:600}.estado.pend{color:var(--aviso)}.estado.err{color:var(--critico)}
+.avisos{font-size:12.5px;color:var(--aviso);padding:0 12px 8px;background:var(--sup2)}
+/* ---------- lado ---------- */
+.lado{font-size:12.5px}
+.lado h4{margin:2px 0 6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink3)}
+.hi{padding:5px 8px;border:1px solid var(--linha);border-radius:7px;margin-bottom:5px;cursor:pointer}
+.hi:hover{border-color:var(--ink3)}.hi.sel{border-color:var(--s1);background:var(--s1f)}
+.hi .l1{display:flex;gap:6px;align-items:center}.hi .l2{color:var(--ink3);font-size:11.5px;margin-top:1px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--sup3);flex:none}.dot.ok{background:var(--bom)}.dot.dv{background:var(--aviso)}
+.legenda span{display:inline-block;margin-right:8px}
+.mods table{width:100%;border-collapse:collapse;font-size:11.5px}.mods td{border-bottom:1px solid var(--linha);padding:3px 4px;vertical-align:top}
+.igual{color:var(--bom);font-weight:700}.dif{color:var(--critico)}
+/* ---------- ajuda ---------- */
+.ajuda{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:20;align-items:center;justify-content:center}
+.ajuda.on{display:flex}
+.ajuda>div{background:var(--sup);border-radius:12px;max-width:820px;max-height:86vh;overflow:auto;padding:18px 22px;font-size:13.5px}
+.ajuda table{border-collapse:collapse;width:100%}.ajuda td{padding:3px 8px;border-bottom:1px solid var(--linha);vertical-align:top}
+</style></head><body>
+<div class="topo">
+ <b>Anotação · entrada <span id="ver"></span></b>
+ <div class="prog"><div class="meta" id="progtxt"></div><div class="b"><i id="barra"></i><s id="alvo"></s></div></div>
+ <div class="meta" id="ritmo"></div>
+ <div class="fil" id="filtros"></div>
+ <input id="ir" placeholder="ir para # ou cliente" style="width:170px">
+ <button id="bajuda">ajuda <kbd>H</kbd></button>
+</div>
+<div class="corpo"><main id="rel"></main><aside class="lado" id="lado"></aside></div>
+<div class="ajuda" id="ajuda"><div id="ajudatxt"></div></div>
+<script>
+const CFG = __CONFIG__;
+const EST = CFG.estados, TIP = CFG.tipos, NOVO = CFG.novo, META = CFG.meta || 230;
+const TIPN = {equipamento: 'Equipamento', producao: 'Produção', consumiveis: 'Consumíveis / pós-venda', lead: 'Por tipificar'};
+const ESTN = ['Lead / Prospeção', 'Qualificação', 'Proposta', 'Negociação', 'Aprovação interna', 'Encomenda', 'Produção / entrega', 'Fechado', 'Perdido', 'Indeterminado'];
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const api = async (url, corpo) => (await fetch(url, corpo ? {method: 'POST',
+  headers: {'Content-Type': 'application/json'}, body: JSON.stringify(corpo)} : {})).json();
+
+/* Regras de cada decisão, as mesmas do prompt c05, para o critério estar à vista no momento em que se decide */
+const REGRA = {
+  conteudo: 'Há conteúdo quando se pode <b>copiar do texto uma frase que diga algo sobre um negócio</b>. Não têm: tentativa falhada que nada regista, cortesia, registo administrativo, texto trivial, <b>informação sobre outra empresa</b> (indicação de contacto, mercado): o negócio é sempre do cliente do relatório. Têm: "sem necessidade de material", interesse genérico, compra a concorrente, convites para feira, <b>recusa de um produto concreto</b>.',
+  negocio: 'Um negócio do bloco é <b>candidato, não prova</b>: só se escolhe se este relatório disser algo sobre ele, e só se for do <b>mesmo tipo e do mesmo assunto</b>. Outro tipo ou outro assunto: <b>NOVO</b>, mesmo que já haja um equipamento ou produção no bloco. Consumíveis: <b>uma só relação</b> por cliente, nunca NOVO se o bloco já a tem.',
+  tipo: 'Quatro sinais tipificam: <b>produto ou marca</b>, necessidade/prazo/verba, <b>pedido do cliente</b>, acção nossa. Nenhum: <b>por tipificar</b>. <b>Produção</b> inclui serviço prestado com equipamento nosso (ex.: holograma num evento). <b>Consumíveis / pós-venda</b>: materiais, peças e assistência ao parque instalado. Área e classificação só desempatam.',
+  estado: '<b>1</b> só a empresa ou a gama, interesse sem objecto, prospecção · <b>2</b> equipamento, tecnologia ou aplicação concreta, sem proposta · amostras e testes sem proposta: 2 ou 4 · <b>3</b> proposta enviada, em preparação ou pedida · <b>4</b> discute condições da proposta · <b>5</b> cliente <b>já aceitou</b>, falta decisão ou financiamento dele · <b>6</b> PO, "encomendou" · <b>7</b> o que <b>este cliente comprou</b> em produção/transporte/instalação · <b>8</b> entregue e aceite · <b>9</b> só <b>sinal definitivo</b> de perda · <b>0</b> sem sinal de fase. Adiar ou não ter verba de momento <b>não muda a fase</b>. Lead só 1, 9 ou 0.',
+  excerto: 'Clicar numa frase do relatório, carregar no seu número, ou arrastar sobre o texto. <b>O excerto é obrigatório</b>: é a evidência para adjudicar.',
+};
+
+/* Realces por dicionário: pistas de leitura, nunca decisões (cf. Lingren et al., 2014) */
+const MARCAS = (CFG.marcas || []).filter(m => m.length >= 3).sort((a, b) => b.length - a.length);
+const RX_MARCA = MARCAS.length ? new RegExp('\\b(' + MARCAS.map(m => m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'gi') : null;
+const REALCES = [
+  [RX_MARCA, 'r1', 'marca do parque'],
+  [/\b(or[çc]amentos?|propostas?|cota[çc][ãõ](?:o|es)|amostras?|demonstra[çc][ãa]o|pre[çc]os?|encomend\w*|adjudic\w*|avan[çc]ar|interess\w*|necessidade\w*|precis\w*|entreg\w*|instala\w*|f[áa]brica)\b/gi, 'r2', 'sinal de negócio'],
+  [/\b(concorr\w*|outro fornecedor|fornecedores?|n[ãa]o atendeu|ausente|sem sucesso|n[ãa]o consegui)\b/gi, 'r3', 'concorrência ou contacto falhado'],
+];
+
+let LISTA = [], FILTRO = 'fila', ATUAL = null, R = null, F = null, PASSO = null, SUJO = false, TOCADO = false;
+let TEMPO = null, ULT = null, T0 = 0, HIST = [], REALCE = true, ESTADO = {c: '', t: '', a: []}, FR = [];
+
+/* ---------------- fila ---------------- */
+const FILTROS = [['fila', 'fila'], ['duv', 'dúvida'], ['anot', 'anotados'], ['dev', 'fases 1-2']];
+function fila() {
+  let ls;
+  if (FILTRO === 'fila') ls = LISTA.filter(x => !x.fase && (!x.anotado || x.vistamp === ATUAL)).sort((a, b) => a.ordem - b.ordem);
+  else if (FILTRO === 'duv') ls = LISTA.filter(x => x.duvida).sort((a, b) => a.linha - b.linha);
+  else if (FILTRO === 'anot') ls = LISTA.filter(x => x.anotado);
+  else ls = LISTA.filter(x => x.fase);
+  return ls;
+}
+function desenharTopo() {
+  const aval = LISTA.filter(x => !x.fase), feitos = aval.filter(x => x.anotado).length;
+  $('progtxt').innerHTML = '<b>' + feitos + '</b> de ' + aval.length + ' de avaliação anotados · meta ' + META
+    + ' · ' + LISTA.filter(x => x.duvida).length + ' com dúvida';
+  $('barra').style.width = (100 * feitos / Math.max(aval.length, 1)).toFixed(1) + '%';
+  $('alvo').style.left = (100 * META / Math.max(aval.length, 1)).toFixed(1) + '%';
+  const tempos = HIST.filter(h => h.seg).map(h => h.seg).slice(0, 15);
+  if (tempos.length) {
+    const med = tempos.reduce((a, b) => a + b, 0) / tempos.length, falta = Math.max(0, META - feitos);
+    $('ritmo').textContent = Math.round(med) + ' s por relatório · faltam ' + falta + ' para a meta, ~'
+      + Math.round(falta * med / 60) + ' min';
+  }
+  $('filtros').innerHTML = FILTROS.map(f => '<button class="' + (FILTRO === f[0] ? 'on' : '') + '" data-f="' + f[0] + '">' + f[1] + '</button>').join('');
+  $('filtros').querySelectorAll('button').forEach(b => b.onclick = () => { FILTRO = b.dataset.f; desenharLado(); desenharTopo(); });
+}
+
+/* ---------------- abrir e sair ---------------- */
+async function abrir(v) {
+  if (!(await sair())) return;
+  ATUAL = v; R = await api('/api/relatorio?vistamp=' + encodeURIComponent(v));
+  const g = R.gold;
+  if (g) {
+    F = {comercial: g.comercial, pares: g.pares.map(p => ({...p, estado: p.estado || null})), duvida: g.duvida, nota: g.nota || ''};
+    PASSO = null; ESTADO = {c: 'ok', t: 'gravado', a: []};
+  } else {
+    F = {comercial: null, pares: [], duvida: false, nota: ''};
+    PASSO = {k: 'conteudo', i: 0}; ESTADO = {c: 'pend', t: 'por anotar', a: []};
+  }
+  SUJO = false; TOCADO = false; T0 = Date.now();
+  desenhar(); window.scrollTo(0, 0);
+}
+async function sair() {
+  clearTimeout(TEMPO);
+  if (!ATUAL || !SUJO || !TOCADO) return true;
+  const r = await gravar();
+  return r.ok || confirm('Este relatório não está completo e não foi gravado:\n\n' + (r.erros || []).join('\n') + '\n\nSair na mesma?');
+}
+async function seguinte(dir) {
+  const ls = fila(), i = ls.findIndex(x => x.vistamp === ATUAL);
+  // Na fila, o seguinte é o próximo por anotar na ordem aleatória; se já não houver
+  // nenhum depois do actual, volta ao primeiro que tenha ficado para trás, para
+  // um relatório saltado a meio não desaparecer da fila.
+  let alvo = dir > 0 ? (i >= 0 ? ls[i + 1] : ls[0]) : ls[i - 1];
+  if (!alvo && dir > 0) alvo = ls.find(x => x.vistamp !== ATUAL && (FILTRO !== 'fila' || !x.anotado));
+  if (alvo) return abrir(alvo.vistamp);
+  if (await sair()) { ESTADO = {c: 'ok', t: 'fim da fila', a: []}; desenharEstado(); }
+}
+
+/* ---------------- gravação automática ---------------- */
+function mudou() {
+  SUJO = true; TOCADO = true; ESTADO = {c: 'pend', t: 'a gravar…', a: []}; desenharEstado();
+  clearTimeout(TEMPO); TEMPO = setTimeout(gravar, 450);
+}
+async function gravar() {
+  clearTimeout(TEMPO);
+  const corpo = {vistamp: ATUAL, comercial: F.comercial, duvida: F.duvida, nota: F.nota,
+    segundos: Math.round((Date.now() - T0) / 100) / 10,
+    pares: F.comercial ? F.pares.map(p => ({negocio_id: p.negocio_id, tipo: p.tipo,
+      estado: p.tipo === 'consumiveis' ? null : p.estado, excerto: p.excerto || ''})) : []};
+  const pedido = api('/api/gravar', corpo); ULT = pedido;
+  const r = await pedido;
+  if (ULT !== pedido) return r;
+  if (r.ok) {
+    SUJO = false;
+    const it = LISTA.find(x => x.vistamp === ATUAL);
+    const novo = it && !it.anotado;
+    if (it) { it.anotado = true; it.duvida = !!F.duvida; }
+    R.gold = {comercial: F.comercial, pares: corpo.pares};
+    if (!r.igual) {
+      HIST = [{v: ATUAL, linha: R.linha, cliente: R.campos.nome, resumo: resumo(), seg: novo ? corpo.segundos : null,
+               duvida: F.duvida}].concat(HIST.filter(h => h.v !== ATUAL)).slice(0, 12);
+    }
+    ESTADO = {c: 'ok', t: '✓ gravado', a: r.avisos || []};
+    desenharTopo(); desenharLado();
+  } else if (PASSO && PASSO.k !== 'fim') ESTADO = {c: 'pend', t: 'por completar', a: []};
+  else ESTADO = {c: 'err', t: 'por gravar: ' + (r.erros || ['?'])[0], a: r.avisos || []};
+  desenharEstado();
+  return r;
+}
+function resumo() {
+  if (F.comercial === false) return 'sem conteúdo';
+  return F.pares.map(p => (p.negocio_id || '?') + ' · ' + (TIPN[p.tipo] || '?') + (p.tipo === 'consumiveis' ? '' : ' · ' + (p.estado ? p.estado.split('.')[0] : '?'))).join('  +  ');
+}
+
+/* ---------------- a máquina de passos ---------------- */
+/* Cada par percorre negócio, tipo, estado e excerto. Os passos que não se aplicam
+   saltam-se sozinhos: o tipo quando o negócio do bloco já o tem, o estado nos consumíveis. */
+const tipoDe = id => (R.negocios.find(n => n.id === id) || {}).tipo;
+const tipoPreso = p => p.negocio_id && p.negocio_id !== NOVO && TIP.includes(tipoDe(p.negocio_id)) && tipoDe(p.negocio_id) !== 'lead';
+function aplica(k, p) {
+  if (k === 'tipo') return !tipoPreso(p);
+  if (k === 'estado') return p.tipo !== 'consumiveis';
+  return true;
+}
+const ORDEM = ['negocio', 'tipo', 'estado', 'excerto'];
+function avancar() {
+  if (!PASSO) return;
+  if (PASSO.k === 'conteudo') { PASSO = F.comercial ? {k: 'negocio', i: 0} : {k: 'fim', i: 0}; return desenhar(); }
+  const p = F.pares[PASSO.i];
+  let j = ORDEM.indexOf(PASSO.k) + 1;
+  while (j < ORDEM.length && !aplica(ORDEM[j], p)) j++;
+  PASSO = j < ORDEM.length ? {k: ORDEM[j], i: PASSO.i} : {k: 'fim', i: PASSO.i};
+  desenhar();
+}
+function recuar() {
+  if (!PASSO || PASSO.k === 'conteudo') return;
+  if (PASSO.k === 'fim') { PASSO = F.comercial ? {k: 'excerto', i: F.pares.length - 1} : {k: 'conteudo', i: 0}; return desenhar(); }
+  const p = F.pares[PASSO.i];
+  let j = ORDEM.indexOf(PASSO.k) - 1;
+  while (j >= 0 && !aplica(ORDEM[j], p)) j--;
+  if (j >= 0) PASSO = {k: ORDEM[j], i: PASSO.i};
+  else PASSO = PASSO.i > 0 ? {k: 'excerto', i: PASSO.i - 1} : {k: 'conteudo', i: 0};
+  desenhar();
+}
+function novoPar() { F.pares.push({negocio_id: null, tipo: null, estado: null, excerto: ''}); PASSO = {k: 'negocio', i: F.pares.length - 1}; }
+
+/* escolhas */
+function setConteudo(v) {
+  F.comercial = v;
+  if (v && !F.pares.length) F.pares = [{negocio_id: null, tipo: null, estado: null, excerto: ''}];
+  if (!v) F.pares = [];
+  mudou(); PASSO = {k: 'conteudo', i: 0}; avancar();
+}
+function setNegocio(i, id) {
+  const p = F.pares[i]; p.negocio_id = id;
+  if (id !== NOVO && TIP.includes(tipoDe(id))) p.tipo = tipoDe(id);
+  if (p.tipo === 'consumiveis') p.estado = null;
+  mudou(); PASSO = {k: 'negocio', i}; avancar();
+}
+function setTipo(i, t) {
+  const p = F.pares[i]; if (tipoPreso(p) && tipoDe(p.negocio_id) !== t) return;
+  p.tipo = t; if (t === 'consumiveis') p.estado = null;
+  mudou(); PASSO = {k: 'tipo', i}; avancar();
+}
+function setEstado(i, j) { const p = F.pares[i]; if (p.tipo === 'consumiveis') return; p.estado = EST[j]; mudou(); PASSO = {k: 'estado', i}; avancar(); }
+function setExcerto(i, t) { F.pares[i].excerto = t; mudou(); PASSO = {k: 'excerto', i}; avancar(); }
+
+/* ---------------- texto em frases ---------------- */
+/* Abreviaturas que terminam em ponto e não fecham frase ("Sr. Santos", "Eng. Carlos", "refª 12") */
+const MAX_PARES = Infinity;   // o esquema não limita o número de pares
+const ABREV = /(?:^|\s)(sr|sra|srª|eng|engª|dr|dra|drª|d|dª|arq|prof|ref|refª|nº|n|p|pág|tel|av|lda|s\.a|v\.?s|ex|exmo|exma|[a-z])\.$/i;
+function partirFrases(t) {
+  const brutas = t.split(/(?<=[.!?;])\s+|\n+/).map(x => x.trim()).filter(Boolean);
+  const partes = [];
+  for (const x of brutas) {
+    if (partes.length && ABREV.test(partes[partes.length - 1])) partes[partes.length - 1] += ' ' + x;
+    else partes.push(x);
+  }
+  const out = []; let cur = 0;
+  for (const p of partes) { let i = t.indexOf(p, cur); if (i < 0) { const m = new RegExp(p.split(' ').map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s+')).exec(t.slice(cur)); if (!m) continue; i = cur + m.index; out.push(...(i > cur ? [{gap: t.slice(cur, i)}] : []), {f: t.slice(i, i + m[0].length)}); cur = i + m[0].length; continue; } if (i > cur) out.push({gap: t.slice(cur, i)}); out.push({f: p}); cur = i + p.length; }
+  if (cur < t.length) out.push({gap: t.slice(cur)});
+  return out;
+}
+function realcar(s) {
+  let h = esc(s);
+  for (const [rx, cls, tit] of REALCES) if (rx) h = h.replace(rx, m => '<span class="r ' + cls + '" title="' + tit + '">' + m + '</span>');
+  return h;
+}
+const norm = s => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+/* ---------------- desenho ---------------- */
+function descNeg(n) {
+  const partes = (n.resto || '').split('|').map(x => x.trim());
+  const util = partes.filter(x => /^(assuntos|marcas|compra):/.test(x)).map(x => x.replace(/^[a-z]+: /, ''));
+  const prim = (n.primeiro || '').replace(/^primeiro relatório: /, '').replace(/^"|"$/g, '');
+  const est = partes.find(x => /^último estado:/.test(x));
+  const txt = (util.join(' · ') || prim || partes.slice(1).join(' · ')).slice(0, 150);
+  return est ? est.replace(/^último estado: /, 'estado ') + ' · ' + txt : txt;
+}
+function desenhar() { desenharRel(); desenharLado(); desenharTopo(); }
+
+function desenharRel() {
+  const c = R.campos, chip = (k, v) => v ? '<span class="chip"><b>' + k + '</b>' + esc(v) + '</span>' : '';
+  const excs = F.comercial ? F.pares.map(p => norm(p.excerto)).filter(Boolean) : [];
+  FR = []; let n = 0;
+  const texto = partirFrases(c.rel || '(vazio)').map(x => {
+    if (x.gap !== undefined) return esc(x.gap);
+    FR.push(x.f); n++;
+    const nf = norm(x.f), escolhida = excs.some(e => e === nf || nf.includes(e) || e.includes(nf));
+    return '<span class="fr' + (escolhida ? ' esc' : '') + '" data-f="' + (n - 1) + '"><sup>' + (n <= 9 ? n : '') + '</sup>' + realcar(x.f) + '</span>';
+  }).join('');
+  const hist = R.historico.length ? R.historico.map(h => '<div class="h"><span>' + esc(h.data) + '</span>' + esc(h.texto) + '</div>').join('') : '<div class="meta">nenhum</div>';
+  const negs = R.negocios.length ? R.negocios.map(x => '<div class="n"><b>' + esc(x.id) + '</b> · ' + esc(TIPN[x.tipo] || x.tipo) + ' · ' + esc(descNeg(x)) + '</div>').join('') : '<div class="meta">nenhum: o negócio de que o relatório fale é NOVO</div>';
+  $('rel').innerHTML =
+    '<div class="cab"><h2>#' + (R.linha ?? '?') + ' · ' + esc(c.nome) + '</h2><span class="meta">' + esc(c.data) + ' · ' + esc(c.vendnm)
+    + ' · ' + esc(c.ctipo) + (R.fase ? ' · ' + R.fase : '') + '</span></div>'
+    + '<div class="chips">' + chip('área', c.u_anegocio) + chip('classificação', c.u_classif) + chip('resumo', c.resumo) + '</div>'
+    + '<div class="ctx"><div class="cx"><h4>Relatórios anteriores</h4>' + hist + '</div><div class="cx"><h4>Negócios abertos à data</h4>' + negs + '</div></div>'
+    + '<div class="rel' + (REALCE ? '' : ' sem-realce') + (PASSO && PASSO.k === 'excerto' ? ' passo-excerto' : '') + '" id="texto">' + texto + '</div>'
+    + '<div class="dec">' + desenharPassos() + '</div>';
+  ligar(); desenharEstado();
+}
+
+function linhaPasso(k, i, nome, valor, opcoes, regra, salto) {
+  const ativo = PASSO && PASSO.k === k && PASSO.i === i;
+  return '<div class="passo' + (ativo ? ' ativo' : valor !== null ? ' feito' : '') + (salto ? ' salto' : '') + '" data-passo="' + k + '" data-i="' + i + '">'
+    + '<div class="nome">' + nome + '</div><div>'
+    + (ativo ? opcoes + (regra ? '<div class="regra">' + regra + '</div>' : '') : '<div class="val">' + (valor ?? '<span class="meta">·</span>') + '</div>')
+    + '</div></div>';
+}
+function desenharPassos() {
+  const ops = (arr, sel, attr, dis) => arr.map((o, j) => '<button class="' + (sel === o.v ? 'on' : '') + '" data-' + attr + '="' + esc(o.v) + '"'
+    + (dis && dis(o) ? ' disabled' : '') + '>' + o.html + '</button>').join('');
+  let h = linhaPasso('conteudo', 0, 'conteúdo',
+    F.comercial === null ? null : F.comercial ? 'com conteúdo comercial' : 'sem conteúdo comercial',
+    '<div class="ops">' + ops([{v: 'S', html: 'Com conteúdo <kbd>S</kbd> <kbd>Enter</kbd>'}, {v: 'N', html: 'Sem conteúdo <kbd>N</kbd>'}],
+      F.comercial === null ? null : F.comercial ? 'S' : 'N', 'cont') + '</div>', REGRA.conteudo);
+  if (F.comercial) F.pares.forEach((p, i) => {
+    h += '<div class="par-t"><span>par ' + (i + 1) + '</span>' + (F.pares.length > 1 ? '<span><button data-rm="' + i + '" style="padding:0 6px;font-size:11px">retirar <kbd>X</kbd></button></span>' : '') + '</div>';
+    const cartoes = R.negocios.map((x, k) => ({v: x.id, html: '<div class="t1"><kbd>' + (k + 1) + '</kbd> <span>' + esc(x.id) + '</span> · ' + esc(TIPN[x.tipo] || x.tipo) + '</div><div class="t2">' + esc(descNeg(x)) + '</div>'}))
+      .concat([{v: NOVO, html: '<div class="t1"><kbd>' + (R.negocios.length + 1) + '</kbd> NOVO</div><div class="t2">negócio que ainda não está no bloco</div>'}]);
+    h += linhaPasso('negocio', i, 'negócio', p.negocio_id ? esc(p.negocio_id) + (p.negocio_id !== NOVO ? ' · ' + esc(descNeg(R.negocios.find(n => n.id === p.negocio_id) || {})).slice(0, 60) : '') : null,
+      '<div class="negs">' + ops(cartoes, p.negocio_id, 'neg') + '</div>', REGRA.negocio);
+    h += linhaPasso('tipo', i, 'tipo', p.tipo ? TIPN[p.tipo] + (tipoPreso(p) ? ' (do bloco)' : '') : null,
+      '<div class="g4">' + ops(TIP.map((t, j) => ({v: t, html: '<kbd>' + (j + 1) + '</kbd> ' + TIPN[t]})), p.tipo, 'tipo') + '</div>', REGRA.tipo, tipoPreso(p));
+    const usados = F.pares.map(q => q.negocio_id);
+    const iguais = p.negocio_id === NOVO && ['equipamento', 'producao', 'lead'].includes(p.tipo) && !p._outro
+      ? R.negocios.filter(n => n.tipo === p.tipo && !usados.includes(n.id)) : [];
+    if (iguais.length) h += '<div class="avisos" style="padding:8px 12px;border-top:1px solid var(--linha)">⚠ O bloco já tem '
+      + (iguais.length > 1 ? 'negócios' : 'um negócio') + ' deste tipo. É o mesmo assunto?<div class="ops" style="margin-top:6px">'
+      + iguais.map(n => '<button data-usar="' + esc(n.id) + '" data-i="' + i + '">sim, é o <b>' + esc(n.id) + '</b> · ' + esc(descNeg(n)).slice(0, 90) + '</button>').join('')
+      + '<button data-outro="' + i + '">não, é outro negócio</button></div></div>';
+    h += linhaPasso('estado', i, 'estado', p.tipo === 'consumiveis' ? 'não se aplica (consumíveis)' : p.estado ? p.estado : null,
+      '<div class="g10">' + ops(EST.map((e, j) => ({v: e, html: '<b>' + (j < 9 ? j + 1 : 0) + '</b><small>' + ESTN[j] + '</small>'})), p.estado, 'est') + '</div>',
+      REGRA.estado, p.tipo === 'consumiveis');
+    h += linhaPasso('excerto', i, 'excerto', p.excerto ? '«' + esc(p.excerto) + '»' : (PASSO && ORDEM.indexOf(PASSO.k) < 3 && PASSO.i === i ? null : 'sem excerto'),
+      '<div class="ops"><button data-semexc="1">seguir sem excerto <kbd>Enter</kbd></button>' + (p.excerto ? '<span class="meta" style="align-self:center">«' + esc(p.excerto) + '»</span>' : '') + '</div>', REGRA.excerto);
+  });
+  h += '<div class="fim">'
+    + (F.comercial && F.pares.length < MAX_PARES ? '<button id="mais">+ par <kbd>A</kbd></button>' : '')
+    + '<button id="duv" class="' + (F.duvida ? 'on' : '') + '">dúvida <kbd>F</kbd></button>'
+    + '<input id="nota" style="flex:1;min-width:150px" placeholder="nota (O)" value="' + esc(F.nota) + '">'
+    + '<button id="ant">anterior <kbd>←</kbd></button>'
+    + '<button id="seg" class="' + (PASSO && PASSO.k === 'fim' || !PASSO ? 'on' : '') + '">seguinte <kbd>espaço</kbd></button>'
+    + '<span id="estado" class="estado"></span></div><div class="avisos" id="avisos"></div>';
+  return h;
+}
+function desenharEstado() {
+  const e = $('estado'); if (!e) return;
+  e.className = 'estado ' + ESTADO.c; e.textContent = ESTADO.t;
+  $('avisos').innerHTML = (ESTADO.a || []).map(a => '⚠ ' + esc(a)).join('<br>');
+}
+function desenharLado() {
+  const ls = fila(), i = ls.findIndex(x => x.vistamp === ATUAL);
+  const prox = ls.slice(i + 1, i + 4);
+  $('lado').innerHTML = '<h4>Feitos nesta sessão</h4>'
+    + (HIST.length ? HIST.map(h => '<div class="hi' + (h.v === ATUAL ? ' sel' : '') + '" data-v="' + h.v + '"><div class="l1"><span class="dot ' + (h.duvida ? 'dv' : 'ok') + '"></span><b>#' + h.linha + '</b> <span class="meta">' + esc((h.cliente || '').slice(0, 22)) + '</span></div><div class="l2">' + esc(h.resumo) + '</div></div>').join('')
+      : '<div class="meta">Ainda nenhum. Clicar num para o rever.</div>')
+    + '<h4 style="margin-top:14px">A seguir na fila</h4>'
+    + (prox.length ? prox.map(x => '<div class="hi" data-v="' + x.vistamp + '"><div class="l1"><span class="dot ' + (x.duvida ? 'dv' : x.anotado ? 'ok' : '') + '"></span><b>#' + x.linha + '</b> <span class="meta">' + esc((x.cliente || '').slice(0, 24)) + '</span></div></div>').join('') : '<div class="meta">—</div>')
+    + '<h4 style="margin-top:14px">Realces <kbd>R</kbd></h4><div class="legenda meta"><span class="r r1">marca</span><span class="r r2">sinal de negócio</span><span class="r r3">concorrência / falhado</span></div>'
+    + '<div class="mods" id="mods" style="margin-top:14px">' + (R && R.gold ? '<button id="vermods">respostas dos modelos <kbd>M</kbd></button>' : '<div class="meta">As respostas dos modelos só aparecem depois de gravar.</div>') + '</div>';
+  $('lado').querySelectorAll('.hi').forEach(el => el.onclick = () => abrir(el.dataset.v));
+  if ($('vermods')) $('vermods').onclick = verModelos;
+}
+
+/* ---------------- ligações ---------------- */
+function ligar() {
+  document.querySelectorAll('[data-cont]').forEach(b => b.onclick = () => setConteudo(b.dataset.cont === 'S'));
+  document.querySelectorAll('.passo').forEach(el => {
+    const k = el.dataset.passo, i = +el.dataset.i;
+    el.querySelectorAll('[data-neg]').forEach(b => b.onclick = e => { e.stopPropagation(); setNegocio(i, b.dataset.neg); });
+    el.querySelectorAll('[data-tipo]').forEach(b => b.onclick = e => { e.stopPropagation(); setTipo(i, b.dataset.tipo); });
+    el.querySelectorAll('[data-est]').forEach(b => b.onclick = e => { e.stopPropagation(); setEstado(i, EST.indexOf(b.dataset.est)); });
+    el.querySelectorAll('[data-semexc]').forEach(b => b.onclick = e => { e.stopPropagation(); PASSO = {k: 'excerto', i}; avancar(); });
+    if (el.classList.contains('feito') || el.classList.contains('salto')) el.onclick = () => {
+      if (el.classList.contains('salto') && !(k === 'tipo')) return;
+      if (k === 'tipo' && tipoPreso(F.pares[i])) return;
+      PASSO = {k, i}; desenharRel();
+    };
+    else if (!el.classList.contains('ativo')) el.onclick = () => { PASSO = {k, i}; desenharRel(); };
+  });
+  document.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => tirarPar(+b.dataset.rm));
+  document.querySelectorAll('[data-usar]').forEach(b => b.onclick = () => setNegocio(+b.dataset.i, b.dataset.usar));
+  document.querySelectorAll('[data-outro]').forEach(b => b.onclick = () => { F.pares[+b.dataset.outro]._outro = true; desenharRel(); });
+  if ($('mais')) $('mais').onclick = () => { novoPar(); desenharRel(); };
+  $('duv').onclick = () => { F.duvida = !F.duvida; mudou(); desenharRel(); };
+  $('nota').oninput = e => { F.nota = e.target.value; mudou(); };
+  $('seg').onclick = () => seguinte(1);
+  $('ant').onclick = () => seguinte(-1);
+  const t = $('texto');
+  t.addEventListener('mouseup', e => {
+    const sel = (window.getSelection() || '').toString().replace(/\s+/g, ' ').trim();
+    if (sel.length >= 3) return excertoLivre(sel);
+    const fr = e.target.closest('.fr'); if (fr) excertoLivre(FR[+fr.dataset.f]);
+  });
+}
+function excertoLivre(t) {
+  if (F.comercial === null || F.comercial === false) { F.comercial = true; if (!F.pares.length) F.pares = [{negocio_id: null, tipo: null, estado: null, excerto: ''}]; }
+  const i = PASSO && PASSO.k !== 'conteudo' && PASSO.k !== 'fim' ? PASSO.i : F.pares.length - 1;
+  F.pares[i].excerto = t; mudou();
+  if (PASSO && PASSO.k === 'excerto') { avancar(); } else desenharRel();
+}
+function tirarPar(i) {
+  if (F.pares.length <= 1) return;
+  F.pares.splice(i, 1); PASSO = {k: 'fim', i: 0}; mudou(); desenharRel();
+}
+
+/* ---------------- modelos (depois de gravar) ---------------- */
+const chave = p => [p.negocio_id || '', p.tipo || '', p.estado || ''].join('|');
+async function verModelos() {
+  const r = await api('/api/modelos?vistamp=' + encodeURIComponent(ATUAL)); if (r.bloqueado) return;
+  const g = R.gold, alvo = (g.pares || []).map(chave).sort().join(';');
+  const ls = r.respostas.map(x => {
+    const igual = !x.erro && !!x.comercial === !!g.comercial && x.pares.map(chave).sort().join(';') === alvo;
+    const ps = x.erro ? 'erro' : x.pares.length ? x.pares.map(p => esc(p.negocio_id) + ' · ' + esc(TIPN[p.tipo] || p.tipo) + ' · ' + esc((p.estado || '-').split('.')[0])).join('<br>') : 'sem conteúdo';
+    return '<tr><td class="mono">' + esc(x.modelo) + '</td><td class="' + (igual ? 'igual' : 'dif') + '">' + (igual ? '=' : '≠') + '</td><td class="mono">' + ps + '</td></tr>';
+  }).join('');
+  $('mods').innerHTML = '<h4>Modelos · ' + (ls.match(/class="igual"/g) || []).length + ' de ' + r.respostas.length + ' iguais</h4>'
+    + (r.respostas.length ? '<table>' + ls + '</table>' : '<div class="meta">Nenhum modelo correu este relatório.</div>');
+}
+
+/* ---------------- teclado ---------------- */
+function teclaNumero(d) {                    // d: 1..9, 10 para o 0
+  if (!PASSO) return false;
+  const i = PASSO.i;
+  if (PASSO.k === 'negocio') { const n = d - 1; if (n < R.negocios.length) setNegocio(i, R.negocios[n].id); else if (n === R.negocios.length) setNegocio(i, NOVO); return true; }
+  if (PASSO.k === 'tipo' && d <= 4) { setTipo(i, TIP[d - 1]); return true; }
+  if (PASSO.k === 'estado') { setEstado(i, d - 1); return true; }
+  if (PASSO.k === 'excerto' && d <= FR.length && d <= 9) { excertoLivre(FR[d - 1]); return true; }
+  return false;
+}
+document.addEventListener('keydown', e => {
+  if ($('ajuda').classList.contains('on')) { if (e.key === 'Escape' || e.key.toLowerCase() === 'h') $('ajuda').classList.remove('on'); return; }
+  if (!F) return;
+  const a = document.activeElement;
+  if (a && a.tagName === 'INPUT') { if (e.key === 'Escape' || e.key === 'Enter') a.blur(); return; }
+  if (e.ctrlKey && e.key.toLowerCase() === 'z') { e.preventDefault(); recuar(); return; }
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  const k = e.key.toLowerCase();
+  if (/^[0-9]$/.test(e.key)) { if (teclaNumero(e.key === '0' ? 10 : +e.key)) e.preventDefault(); return; }
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (!PASSO) return seguinte(1);
+    if (PASSO.k === 'conteudo') return setConteudo(true);
+    if (PASSO.k === 'excerto') return avancar();
+    if (PASSO.k === 'fim') return seguinte(1);
+    return;
+  }
+  if (e.key === ' ') { e.preventDefault(); return seguinte(1); }
+  if (e.key === 'Backspace') { e.preventDefault(); return recuar(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); return seguinte(-1); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); return seguinte(1); }
+  if (k === 's') { e.preventDefault(); return setConteudo(true); }
+  if (k === 'n') { e.preventDefault(); return setConteudo(false); }
+  if (k === 'a' && F.comercial && F.pares.length < MAX_PARES) { e.preventDefault(); novoPar(); return desenharRel(); }
+  if (k === 'x' && PASSO && F.pares.length > 1) { e.preventDefault(); return tirarPar(PASSO.i); }
+  if (k === 'f') { e.preventDefault(); F.duvida = !F.duvida; mudou(); return desenharRel(); }
+  if (k === 'o') { e.preventDefault(); return $('nota').focus(); }
+  if (k === 'r') { e.preventDefault(); REALCE = !REALCE; return $('texto').classList.toggle('sem-realce', !REALCE); }
+  if (k === 'm' && R.gold) { e.preventDefault(); return verModelos(); }
+  if (k === 'h') { e.preventDefault(); return $('ajuda').classList.add('on'); }
+});
+window.addEventListener('beforeunload', e => { if (SUJO && TOCADO) { gravar(); e.preventDefault(); e.returnValue = ''; } });
+$('bajuda').onclick = () => $('ajuda').classList.add('on');
+$('ajuda').onclick = e => { if (e.target.id === 'ajuda') $('ajuda').classList.remove('on'); };
+$('ir').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const q = e.target.value.trim().toLowerCase().replace('#', ''); if (!q) return;
+  const x = LISTA.find(y => String(y.linha) === q) || LISTA.find(y => (y.cliente || '').toLowerCase().includes(q));
+  e.target.value = ''; e.target.blur(); if (x) abrir(x.vistamp);
+});
+$('ajudatxt').innerHTML = '<h3 style="margin-top:0">Como anotar depressa</h3>'
+  + '<p>Cada relatório percorre os passos de cima para baixo e o passo activo está realçado. <b>Os números escolhem sempre no passo activo</b>: '
+  + 'negócio pelo número do cartão, tipo de 1 a 4, estado de 1 a 9 e 0 para o 10, excerto pelo número da frase. Os passos que não se aplicam saltam-se sozinhos. '
+  + 'Grava sozinho a cada escolha; o espaço passa ao seguinte.</p>'
+  + '<p>Um relatório típico: <kbd>Enter</kbd> (tem conteúdo) · <kbd>1</kbd> (negócio) · <kbd>3</kbd> (estado) · <kbd>2</kbd> (frase) · <kbd>espaço</kbd>.</p>'
+  + '<table>' + [['S / Enter', 'tem conteúdo comercial'], ['N', 'sem conteúdo comercial'], ['1…9, 0', 'escolher no passo activo'],
+    ['clicar numa frase', 'excerto; arrastar para um excerto livre'], ['Backspace, Ctrl+Z', 'voltar um passo'], ['A', 'acrescentar par'],
+    ['X', 'retirar o par activo'], ['F', 'marcar dúvida'], ['O', 'escrever nota'], ['espaço, →', 'seguinte na fila'], ['←', 'anterior'],
+    ['R', 'ligar e desligar os realces'], ['M', 'respostas dos modelos (só depois de gravar)'], ['H', 'esta ajuda']]
+    .map(r => '<tr><td><kbd>' + r[0] + '</kbd></td><td>' + r[1] + '</td></tr>').join('') + '</table>'
+  + '<p class="meta">A fila está por ordem aleatória com semente fixa: qualquer ponto em que se pare deixa uma amostra aleatória do conjunto de avaliação. '
+  + 'Os realces são um dicionário fixo de pistas, não uma sugestão de resposta. As respostas dos modelos ficam escondidas até gravar, para o gold não se ancorar nelas.</p>';
+
+(async () => {
+  $('ver').textContent = CFG.versao;
+  LISTA = await api('/api/lista');
+  desenharTopo();
+  const p = fila()[0] || LISTA[0];
+  if (p) abrir(p.vistamp);
+})();
+</script></body></html>

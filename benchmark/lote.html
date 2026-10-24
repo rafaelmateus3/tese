@@ -1,0 +1,187 @@
+<!doctype html><html lang="pt"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Revisão em lote</title>
+<style>
+:root{color-scheme:light;--sup:#fcfcfb;--sup2:#f3f3f1;--sup3:#e8e8e4;--linha:#e0e0dc;--ink:#0b0b0b;--ink2:#4f4e4b;--ink3:#78766f;
+ --s1:#2a78d6;--s1f:rgba(42,120,214,.10);--bom:#0ca30c;--aviso:#a86f00;--critico:#d03b3b}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme=light])){color-scheme:dark;--sup:#1a1a19;--sup2:#232322;--sup3:#2f2f2d;
+ --linha:#37372f;--ink:#fff;--ink2:#c8c7bc;--ink3:#93928a;--s1:#3987e5;--s1f:rgba(57,135,229,.16);--aviso:#e0a526}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--sup);color:var(--ink);font:14px/1.5 ui-sans-serif,system-ui,"Segoe UI",sans-serif}
+button{font:inherit;cursor:pointer;background:var(--sup2);border:1px solid var(--linha);color:var(--ink);border-radius:7px;padding:3px 9px}
+button:hover{border-color:var(--ink3)}button.on{background:var(--s1);border-color:var(--s1);color:#fff}
+button:disabled{opacity:.28;cursor:default}
+select,input{font:inherit;background:var(--sup);color:var(--ink);border:1px solid var(--linha);border-radius:6px;padding:3px 6px}
+.topo{position:sticky;top:0;z-index:5;background:var(--sup);border-bottom:1px solid var(--linha);padding:8px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.topo b{font-size:14px}.topo .meta{color:var(--ink3);font-size:12.5px}
+.fil{display:flex;gap:4px;flex-wrap:wrap}.fil button{font-size:12px;padding:2px 8px}
+.lista{max-width:1180px;margin:0 auto;padding:12px 18px 80px;display:grid;gap:14px}
+.card{border:1px solid var(--linha);border-radius:10px;overflow:hidden}
+.card.feito{opacity:.6}.card.feito .corpo{display:none}
+.cab{background:var(--sup2);padding:6px 12px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}
+.cab h3{margin:0;font-size:15px}.cab .meta{color:var(--ink3);font-size:12px}
+.mot{font-size:11.5px;background:rgba(168,111,0,.12);color:var(--aviso);border-radius:10px;padding:0 7px}
+.corpo{padding:8px 12px;display:grid;gap:8px}
+details{font-size:12.5px;color:var(--ink2)}details summary{cursor:pointer;color:var(--ink3)}
+.ctx{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+@media (max-width:800px){.ctx{grid-template-columns:1fr}}
+.ctx div{border:1px dashed var(--linha);border-radius:7px;padding:4px 8px;white-space:pre-line}
+.rel{font-size:16px;line-height:1.65;background:var(--sup2);border:1px solid var(--linha);border-radius:8px;padding:10px 14px;white-space:pre-wrap}
+.campos{font-size:12px;color:var(--ink3)}
+.par{display:grid;grid-template-columns:minmax(150px,210px) auto;gap:6px 10px;align-items:center;border-top:1px solid var(--linha);padding-top:8px}
+.par .l{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink3)}
+.bt{display:flex;flex-wrap:wrap;gap:4px}.bt button{min-width:34px;text-align:center}
+.exc{display:flex;gap:6px}.exc input{flex:1}
+.fim{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--linha);padding-top:8px}
+.st{font-size:12.5px;margin-left:auto}.st.ok{color:var(--bom);font-weight:600}.st.err{color:var(--critico)}.st.av{color:var(--aviso)}
+.resumo{font-size:12.5px;color:var(--ink2)}
+</style></head><body>
+<div class="topo">
+ <b>Revisão em lote · regras c06</b>
+ <span class="meta" id="prog"></span>
+ <div class="fil" id="fil"></div>
+ <label class="meta"><input type="checkbox" id="soPend" checked> só por rever</label>
+ <a class="meta" href="/">anotador</a>
+</div>
+<div class="lista" id="lista"></div>
+<script>
+const CFG = __CONFIG__;
+const EST = CFG.estados, TIP = CFG.tipos, NOVO = CFG.novo;
+const TIPN = {equipamento: 'Equipamento', producao: 'Produção', consumiveis: 'Consumíveis', lead: 'Por tipificar'};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const api = async (url, corpo) => (await fetch(url, corpo ? {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(corpo)} : {})).json();
+const NOMES = {C1:'consenso de modelos', C2:'sem excerto', C3:'fronteira 1/2', C4:'recusa ou adiamento', C5:'estado 5', C6:'estado 7', C7:'negócio do bloco', C8:'lead fora de 1/9/10', C9:'amostra sem proposta', C10:'negócio já aberto'};
+const REGRA = {
+  C3: '2 quando há equipamento, tecnologia ou aplicação concreta (do cliente ou apresentada por nós); 1 quando só a empresa ou a gama foi apresentada, ou o interesse não tem objecto.',
+  C4: 'Adiar ou não ter capacidade de investir de momento não muda a fase. 9 só com sinal definitivo: comprou a outro, desistiu, cancelou, não vai comprar.',
+  C5: '5 quando o cliente já aceitou e falta decisão ou financiamento dele (direção, CAPEX, candidatura). Avaliar proposta é 3.',
+  C6: '7 quando o que ESTE cliente comprou está em produção, transporte ou instalação. Máquina de demonstração não conta.',
+  C7: 'Negócio do bloco só se for do mesmo tipo e do mesmo assunto; outro assunto é NOVO, mesmo do mesmo tipo. Consumíveis: uma só relação.',
+  C8: 'Lead só em 1, 9 ou 10: com produto ou aplicação concreta, o tipo é conhecido.',
+  C9: '3 exige preço, proposta ou orçamento enviado, em preparação ou pedido. Amostras e testes sem proposta são 2 ou 4.',
+  C2: 'O excerto é obrigatório: seleciona a frase no texto e usa "↳ seleção".',
+  C10: 'O bloco tem um negócio aberto numa anotação anterior (NG-A…). Se for o mesmo assunto, usa esse id em vez de NOVO.',
+  C1: 'Seis ou mais modelos deram a mesma resposta diferente. Decide pelas regras, não pelos modelos.'
+};
+let DADOS = [], FIL = '*', FEITOS = new Set(), F = {};
+
+function carregarForm(r) {
+  const g = r.gold;
+  F[r.vistamp] = {comercial: g.comercial, pares: g.pares.map(p => ({...p, estado: p.estado || null, excerto: p.excerto || ''}))};
+}
+function codigos(r) { return [...new Set(r.motivos.map(m => m.c))]; }
+function visiveis() {
+  return DADOS.filter(r => (FIL === '*' || codigos(r).includes(FIL)) && (!$('soPend').checked || (r.gold.duvida && !FEITOS.has(r.vistamp))));
+}
+function desenharFiltros() {
+  const cont = {};
+  DADOS.forEach(r => { if (r.gold.duvida && !FEITOS.has(r.vistamp)) codigos(r).forEach(c => cont[c] = (cont[c] || 0) + 1); });
+  const pend = DADOS.filter(r => r.gold.duvida && !FEITOS.has(r.vistamp)).length;
+  $('prog').textContent = pend + ' por rever de ' + DADOS.length;
+  const cs = Object.keys(NOMES).filter(c => DADOS.some(r => codigos(r).includes(c)));
+  $('fil').innerHTML = '<button data-f="*" class="' + (FIL === '*' ? 'on' : '') + '">todos</button>' +
+    cs.map(c => '<button data-f="' + c + '" class="' + (FIL === c ? 'on' : '') + '">' + c + ' ' + NOMES[c] + ' (' + (cont[c] || 0) + ')</button>').join('');
+}
+function botoes(lista, atual, attr, desat) {
+  return lista.map(([v, t]) => '<button data-' + attr + '="' + esc(v) + '" class="' + (String(atual) === String(v) ? 'on' : '') + '"' + (desat && desat(v) ? ' disabled' : '') + '>' + t + '</button>').join('');
+}
+function htmlPar(r, i) {
+  const f = F[r.vistamp], p = f.pares[i], blk = r.negocios.find(n => n.id === p.negocio_id);
+  const opts = ['<option value="' + NOVO + '"' + (p.negocio_id === NOVO ? ' selected' : '') + '>NOVO</option>']
+    .concat(r.negocios.map(n => '<option value="' + esc(n.id) + '"' + (n.id === p.negocio_id ? ' selected' : '') + '>' + esc(n.id + ' · ' + n.tipo + ' · ' + n.resto.slice(0, 60)) + '</option>'));
+  const semEst = p.tipo === 'consumiveis';
+  const estOps = EST.map((e, k) => [e, (k + 1) + '']);
+  return '<div class="par" data-i="' + i + '">' +
+    '<span class="l">par ' + (i + 1) + ' · negócio</span><div><select data-neg="1">' + opts.join('') + '</select> <button data-rm="1">retirar</button></div>' +
+    '<span class="l">tipo</span><div class="bt">' + botoes(TIP.map(t => [t, TIPN[t]]), p.tipo, 'tipo', () => !!blk && blk.tipo !== 'lead') + '</div>' +
+    '<span class="l">estado</span><div class="bt">' + (semEst ? '<span class="campos">consumíveis não levam estado</span>' :
+      botoes(estOps, p.estado, 'est', v => p.tipo === 'lead' && !/^(1|9|10)\./.test(v))) + '</div>' +
+    (function () {
+      const usados = f.pares.map(q => q.negocio_id);
+      const ig = p.negocio_id === NOVO && ['equipamento', 'producao', 'lead'].includes(p.tipo) && !p._outro
+        ? r.negocios.filter(n => n.tipo === p.tipo && !usados.includes(n.id)) : [];
+      return ig.length ? '<span class="l" style="color:var(--aviso)">⚠ mesmo tipo no bloco</span><div class="bt">'
+        + ig.map(n => '<button data-usar="' + esc(n.id) + '">sim, é o ' + esc(n.id) + ' · ' + esc(n.resto.slice(0, 70)) + '</button>').join('')
+        + '<button data-outro="1">não, é outro negócio</button></div>' : '';
+    })() +
+    '<span class="l">excerto</span><div class="exc"><input data-exc="1" value="' + esc(p.excerto) + '"><button data-sel="1">↳ seleção</button></div></div>';
+}
+function htmlCard(r) {
+  const f = F[r.vistamp], c = r.campos, feito = FEITOS.has(r.vistamp);
+  const mot = r.motivos.map(m => '<span class="mot" title="' + esc(REGRA[m.c] || '') + '">' + esc(m.c + ' ' + m.t) + '</span>').join(' ');
+  const regras = [...new Set(r.motivos.map(m => m.c))].filter(c => REGRA[c]).map(c => '<div class="campos"><b>' + c + '</b> ' + esc(REGRA[c]) + '</div>').join('');
+  const hist = (r.historico || []).slice(0, 3).map(h => h.data + ' | ' + h.texto).join('\n\n') || 'nenhum';
+  const negs = (r.negocios || []).map(n => n.id + ' | ' + n.tipo + ' | ' + n.resto + (n.primeiro ? '\n  ' + n.primeiro : '')).join('\n') || 'nenhum';
+  const resumo = f.comercial === false ? 'sem conteúdo' : f.pares.map(p => p.negocio_id + ' · ' + (TIPN[p.tipo] || '?') + (p.tipo === 'consumiveis' ? '' : ' · ' + (p.estado || '?').split('.')[0])).join('  +  ');
+  return '<div class="card' + (feito ? ' feito' : '') + '" data-v="' + r.vistamp + '">' +
+    '<div class="cab"><h3>#' + r.linha + ' · ' + esc(r.cliente) + '</h3><span class="meta">' + esc(c.data || '') + ' · ' + esc(c.ctipo || '') + ' · área ' + esc(c.u_anegocio || '-') + ' · classif. ' + esc(c.u_classif || '-') + '</span> ' + mot +
+    (feito ? ' <span class="resumo">✓ ' + esc(resumo) + '</span> <button data-reabrir="1">reabrir</button>' : '') + '</div>' +
+    '<div class="corpo">' + regras +
+    '<details><summary>relatórios anteriores e negócios abertos</summary><div class="ctx"><div>' + esc(hist) + '</div><div>' + esc(negs) + '</div></div></details>' +
+    (c.resumo ? '<div class="campos">resumo: ' + esc(c.resumo) + '</div>' : '') +
+    '<div class="rel">' + esc(c.rel || '') + '</div>' +
+    '<div class="bt"><span class="campos" style="margin-right:6px">conteúdo comercial</span>' + botoes([[true, 'com'], [false, 'sem']], f.comercial, 'com') + '</div>' +
+    (f.comercial ? f.pares.map((_, i) => htmlPar(r, i)).join('') + '<div><button data-add="1">+ par</button></div>' : '') +
+    '<div class="fim"><button data-ok="1" class="on">confirmar ✓</button><span class="campos">confirmar grava e retira a dúvida</span><span class="st" data-st="1"></span></div>' +
+    '</div></div>';
+}
+function desenhar() {
+  desenharFiltros();
+  const vs = visiveis();
+  $('lista').innerHTML = vs.length ? vs.map(htmlCard).join('') : '<p class="campos">Nada por rever neste filtro.</p>';
+}
+function redesenharCard(v) {
+  const el = document.querySelector('.card[data-v="' + v + '"]'); if (!el) return;
+  const r = DADOS.find(x => x.vistamp === v); el.outerHTML = htmlCard(r); desenharFiltros();
+}
+async function confirmar(v) {
+  const r = DADOS.find(x => x.vistamp === v), f = F[v];
+  const nota = r.gold.nota.startsWith('[revisto c06]') ? r.gold.nota : '[revisto c06] ' + r.gold.nota;
+  const corpo = {vistamp: v, comercial: f.comercial, pares: f.comercial ? f.pares : [], duvida: false, nota: nota, origem: 'lote'};
+  const res = await api('/api/gravar', corpo);
+  const st = document.querySelector('.card[data-v="' + v + '"] [data-st]');
+  if (!res.ok) { st.className = 'st err'; st.textContent = (res.erros || []).join(' · '); return; }
+  r.gold = {...r.gold, comercial: f.comercial, pares: corpo.pares, duvida: false, nota: nota};
+  FEITOS.add(v);
+  if (res.avisos && res.avisos.length) { st.className = 'st av'; st.textContent = 'gravado · ' + res.avisos.join(' · '); }
+  if ($('soPend').checked) { const el = document.querySelector('.card[data-v="' + v + '"]'); el.classList.add('feito'); setTimeout(() => { desenharFiltros(); el.remove(); }, res.avisos && res.avisos.length ? 2500 : 300); }
+  else redesenharCard(v);
+}
+document.addEventListener('click', ev => {
+  const b = ev.target.closest('button'); if (!b) return;
+  if (b.dataset.f) { FIL = b.dataset.f; return desenhar(); }
+  const card = b.closest('.card'); if (!card) return;
+  const v = card.dataset.v, r = DADOS.find(x => x.vistamp === v), f = F[v];
+  const pe = b.closest('.par'), i = pe ? +pe.dataset.i : -1;
+  if (b.dataset.ok) return confirmar(v);
+  if (b.dataset.reabrir) { FEITOS.delete(v); return redesenharCard(v); }
+  if (b.dataset.com !== undefined) { f.comercial = b.dataset.com === 'true'; if (f.comercial && !f.pares.length) f.pares.push({negocio_id: NOVO, tipo: null, estado: null, excerto: ''}); return redesenharCard(v); }
+  if (b.dataset.add) { f.pares.push({negocio_id: NOVO, tipo: null, estado: null, excerto: ''}); return redesenharCard(v); }
+  if (b.dataset.rm) { f.pares.splice(i, 1); if (!f.pares.length) f.comercial = false; return redesenharCard(v); }
+  if (b.dataset.tipo) { f.pares[i].tipo = b.dataset.tipo; if (b.dataset.tipo === 'consumiveis') f.pares[i].estado = null;
+    if (b.dataset.tipo === 'lead' && f.pares[i].estado && !/^(1|9|10)\./.test(f.pares[i].estado)) f.pares[i].estado = null; return redesenharCard(v); }
+  if (b.dataset.usar) { const n = r.negocios.find(x => x.id === b.dataset.usar); f.pares[i].negocio_id = n.id; f.pares[i].tipo = n.tipo; return redesenharCard(v); }
+  if (b.dataset.outro) { f.pares[i]._outro = true; return redesenharCard(v); }
+  if (b.dataset.est) { f.pares[i].estado = b.dataset.est; return redesenharCard(v); }
+  if (b.dataset.sel) {
+    const s = window.getSelection(); const t = s ? s.toString().trim() : '';
+    if (t && card.querySelector('.rel').contains(s.anchorNode)) { f.pares[i].excerto = t; return redesenharCard(v); }
+  }
+});
+document.addEventListener('change', ev => {
+  const card = ev.target.closest('.card'); if (!card) return;
+  const v = card.dataset.v, r = DADOS.find(x => x.vistamp === v), f = F[v];
+  if (ev.target.id === 'soPend') return;
+  const pe = ev.target.closest('.par'), i = pe ? +pe.dataset.i : -1;
+  if (ev.target.dataset.neg) { const id = ev.target.value; f.pares[i].negocio_id = id; const n = r.negocios.find(x => x.id === id);
+    if (n) { f.pares[i].tipo = n.tipo; if (n.tipo === 'consumiveis') f.pares[i].estado = null; } redesenharCard(v); }
+});
+document.addEventListener('input', ev => {
+  if (!ev.target.dataset.exc) return;
+  const card = ev.target.closest('.card'), i = +ev.target.closest('.par').dataset.i;
+  F[card.dataset.v].pares[i].excerto = ev.target.value;
+});
+$('soPend').addEventListener('change', desenhar);
+(async () => { DADOS = await api('/api/lote'); DADOS.forEach(carregarForm); desenhar(); })();
+</script></body></html>
